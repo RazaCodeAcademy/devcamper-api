@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const logger = require('./middleware/logger');
 const connectDB = require('./config/db');
+const errorHandler = require('./middleware/error')
 
 // Route files
 const bootcamps = require('./routes/bootcamps'); //include file to the server.js file
@@ -20,6 +21,8 @@ app.use(logger);
 
 // Mount routers
 app.use('/api/v1/bootcamps', bootcamps); //first paramerter is base_url and second is file_path
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
