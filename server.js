@@ -6,6 +6,7 @@ const errorHandler = require('./middleware/error')
 
 // Route files
 const bootcamps = require('./routes/bootcamps'); //include file to the server.js file
+const courses = require('./routes/courses'); //include file to the server.js file
 
 // load env vars
 dotenv.config({path:'./config/config.env'});
@@ -21,6 +22,7 @@ app.use(logger);
 
 // Mount routers
 app.use('/api/v1/bootcamps', bootcamps); //first paramerter is base_url and second is file_path
+app.use('/api/v1/courses', courses); //first paramerter is base_url and second is file_path
 
 app.use(errorHandler);
 

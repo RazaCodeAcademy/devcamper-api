@@ -39,7 +39,7 @@ const BootcampSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please add a address"],
     },
-    location:{
+    location: {
         // GeoJSON Point
         type: {
             type: String,
@@ -59,11 +59,11 @@ const BootcampSchema = new mongoose.Schema({
         zipcode: String,
         country: String
     },
-    careers:{
+    careers: {
         // array of strings
-        type:[String],
-        required:true,
-        enum:[
+        type: [String],
+        required: true,
+        enum: [
             'Web Development',
             'Mobile Development',
             'UI/UX',
@@ -72,46 +72,50 @@ const BootcampSchema = new mongoose.Schema({
             'Others',
         ]
     },
-    averageRating:{
-        type:Number,
-        min:[1, 'Rating must at least 1' ],
-        max:[10, 'Rating must at least 10' ],
+    averageRating: {
+        type: Number,
+        min: [1, 'Rating must at least 1'],
+        max: [10, 'Rating must at least 10'],
     },
-    averageCost:Number,
-    photo:{
+    averageCost: Number,
+    photo: {
         type: String,
         default: 'no-photo.jpg',
     },
-    housing:{
+    housing: {
         type: Boolean,
         default: false,
     },
-    jobAssistance:{
+    jobAssistance: {
         type: Boolean,
         default: false,
     },
-    jobGuarantee:{
+    jobGuarantee: {
         type: Boolean,
         default: false,
     },
-    acceptGi:{
+    acceptGi: {
         type: Boolean,
         default: false,
     },
-    createdAt:{
+    createdAt: {
         type: Date,
         default: Date.now,
     },
+}, {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+
 });
 
 // create bootcamp slug from the name
-BootcampSchema.pre('save', function(next){
+BootcampSchema.pre('save', function (next) {
     this.slug = slugify(this.name, { lower: true });
     next();
 });
 
 // geocode & create location field
-BootcampSchema.pre('save', async function(next){
+BootcampSchema.pre('save', async function (next) {
     const loc = await geocoder.geocode(this.address);
     this.location = {
         type: 'Point',
@@ -128,5 +132,19 @@ BootcampSchema.pre('save', async function(next){
     this.address = undefined;
     next();
 });
+
+// cascade delete courses when a bootcamp is deleted
+BootcampSchema.pre('remove', async function (next) {
+    await this.model('Course').deleteMany({ bootcamp: this._id });
+    next();
+});
+
+// reverse populate with virtuals
+BootcampSchema.virtual('courses', {
+    ref: 'Course',
+    localField: '_id',
+    foreignField: 'bootcamp',
+    justOne: false
+})
 
 module.exports = mongoose.model('Bootcamp', BootcampSchema);
