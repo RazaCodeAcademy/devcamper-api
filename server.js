@@ -2,13 +2,15 @@ const path = require('path');
 const express = require('express');
 const dotenv = require('dotenv');
 const logger = require('./middleware/logger');
-const errorHandler = require('./middleware/error');
 const fileupload = require('express-fileupload');
+const cookieParser = require('cookie-parser');
+const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
 
 // Route files
 const bootcamps = require('./routes/bootcamps'); //include file to the server.js file
 const courses = require('./routes/courses'); //include file to the server.js file
+const auth = require('./routes/auth'); //include file to the server.js file
 
 // load env vars
 dotenv.config({path:'./config/config.env'});
@@ -18,7 +20,11 @@ connectDB();
 
 const app = express();
 
+// body parser
 app.use(express.json());
+
+// cookie parser
+app.use(cookieParser());
 
 app.use(logger);
 
@@ -30,6 +36,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Mount routers
 app.use('/api/v1/bootcamps', bootcamps); //first paramerter is base_url and second is file_path
 app.use('/api/v1/courses', courses); //first paramerter is base_url and second is file_path
+app.use('/api/v1/auth', auth); //first paramerter is base_url and second is file_path
 
 app.use(errorHandler);
 
