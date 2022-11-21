@@ -7,7 +7,7 @@ const errorHandler = (err, req, res, next) => {
 
     // mongoose bas objectId
     if(err.name === 'CastError'){
-        const message = `Bootcamp not found with id of ${err.value}`;
+        const message = Object.keys(err.value).length === 0 ? `Resource not found` : `Resource not found with id of ${err.value}`;
         error = new ErrorResponse(message, 404);
     }
 
