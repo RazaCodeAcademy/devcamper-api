@@ -1,8 +1,8 @@
 const crypto = require('crypto');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
-const sendEmail = require('../utils/sendEmail');
 const User = require('../models/User.js');
+const sendEmail = require('../utils/sendEmail');
 
 // @desc Register user
 // @route Post /api/v1/auth/register
@@ -28,8 +28,8 @@ exports.register = asyncHandler(async (req, res, next) => {
     });
 });
 
-// @desc Register user
-// @route Post /api/v1/auth/register
+// @desc Login user
+// @route Post /api/v1/auth/login
 // @access Public
 exports.login = asyncHandler(async (req, res, next) => {
 
@@ -37,7 +37,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 
     // validate email & password
     if (!email || !password) {
-        return next(new ErrorResponse('Please aprovide an email an password'), 400);
+        return next(new ErrorResponse('Please provide an email an password'), 400);
     }
 
     // check for user
@@ -150,7 +150,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
 });
 
 // @desc Forgot password
-// @route POST /api/v1/auth/auth
+// @route POST /api/v1/auth/forgot-password
 // @access Public
 exports.forgotPassword = asyncHandler(async (req, res, next) => {
     const user = await User.findOne({ email: req.body.email });
@@ -167,7 +167,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
     // create reset url
     const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/reset-password/${resetToken}`;
 
-    const message = `You are receiving this email bevause you (or someone else) has requested the reset of a password.
+    const message = `You are receiving this email because you (or someone else) has requested the reset of a password.
     Please make a PUT request to: \n\n ${resetUrl}`;
 
     try {
@@ -198,7 +198,7 @@ const sendTokenResponse = (user, statusCode, res) => {
     const token = user.getSignedJwtToken();
 
     const options = {
-        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000),
         httpOnly: true
     };
 
