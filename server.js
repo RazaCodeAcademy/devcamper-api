@@ -12,6 +12,7 @@ const hpp = require('hpp');
 const cors = require('cors');
 const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
+const connectMysqlDB = require('./config/mysql');
 
 // Route files
 const bootcamps = require('./routes/bootcamps'); //include file to the server.js file
@@ -25,6 +26,7 @@ dotenv.config({path:'./config/config.env'});
 
 // connect to database
 connectDB();
+connectMysqlDB();
 
 const app = express();
 
