@@ -26,7 +26,7 @@ dotenv.config({path:'./config/config.env'});
 
 // connect to database
 connectDB();
-connectMysqlDB();
+// connectMysqlDB();
 
 const app = express();
 
