@@ -4,7 +4,8 @@ const {
     getReview,
     addReview,
     updateReview,
-    deleteReview
+    deleteReview,
+    getUserReviews
 } = require('../controllers/reviews');
 
 const Review = require('../models/Review');
@@ -16,11 +17,12 @@ const { protect, authorize } = require('../middleware/auth');
 
 router.route('/')
     .get(advancedResults(Review, {
-        path: 'bootcamp',
-        select: 'name description'
-
+        path: 'user bootcamp'
     }), getReviews)
     .post(protect, authorize('user', 'admin'), addReview);
+
+router.route('/by-user')
+    .get(protect, getUserReviews);
 
 router.route('/:id')
     .get(getReview)

@@ -83,6 +83,9 @@ exports.updateCourse = asyncHandler(async (req, res, next) => {
     course = await Course.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators: true
+    }).populate({
+        path: 'bootcamp',
+        select: 'name description'
     });
 
     res.status(200).json({

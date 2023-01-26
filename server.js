@@ -14,6 +14,7 @@ const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db');
 const connectMysqlDB = require('./config/mysql');
 
+
 // Route files
 const bootcamps = require('./routes/bootcamps'); //include file to the server.js file
 const courses = require('./routes/courses'); //include file to the server.js file
@@ -29,6 +30,9 @@ connectDB();
 // connectMysqlDB();
 
 const app = express();
+var bodyParser = require('body-parser');
+app.use(bodyParser.json({limit: "50mb"}));
+app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
 
 // body parser
 app.use(express.json());
